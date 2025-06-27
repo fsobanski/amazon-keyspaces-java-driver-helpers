@@ -76,7 +76,7 @@ public class AmazonKeyspacesRoundRobinLoadBalancingPolicy extends BasicLoadBalan
         int totalNodes = currentNodes.length;
 
         if (LOG.isTraceEnabled()) {
-            if (totalNodes > 0) {
+            if (totalNodes > 0 && session != null) {
                 //int currentSize = getSize((Node) currentNodes[0], session);
 
                 int inflight = getInFlight((Node) currentNodes[0], session);
@@ -88,6 +88,8 @@ public class AmazonKeyspacesRoundRobinLoadBalancingPolicy extends BasicLoadBalan
                 int requestPerMostUsedConnection = (openConnections > 0) ? (inflight / openConnections) : 0;
 
                 LOG.trace(" Total local nodes: [{}], First Node [{}], Number of Connections: [{}], Total inflight:[{}], Number of Request per connection: [{}]", totalNodes, firstNode, openConnections, inflight, requestPerMostUsedConnection);
+            } else if (session == null) {
+                LOG.trace(" Total local nodes: [{}], Session is null", totalNodes);
             }
         }
         return queryPlan;
